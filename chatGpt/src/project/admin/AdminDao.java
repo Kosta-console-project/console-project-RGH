@@ -82,26 +82,6 @@ public class AdminDao {
 		}
 		return false;
 	}
-	
-//	//플레이어 아이디로 블랙리스트 출력
-//	public void findByPlayerId(int playerId) {
-//		Connection conn = dbconn.conn();
-//		
-//		String sql = "SELECT black_list_id, reason, create_date, last_modified_date FROM blacklist WHERE player_id=?";
-//		
-//		try {
-//			PreparedStatement pstmt = conn.prepareStatement(sql);
-//			
-//			pstmt.setInt(1, playerId);
-//			pstmt.executeUpdate();
-//			
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}finally {
-//			dbconn.disconnectDB(conn);
-//		}
-//	}
 
 	// 블랙리스트 전체 출력
 	public ArrayList<BlackList> selectAllBlackList() {
