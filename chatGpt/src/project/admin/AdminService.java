@@ -29,7 +29,11 @@ public class AdminService {
 		System.out.println("부여할 크레딧:");
 		int newCredit = sc.nextInt();
 
+<<<<<<< HEAD
 		playerDao.updateCredit(p, newCredit);
+=======
+//		adminDao.updateCredit(p.getCredit() + newCredit);
+>>>>>>> b34e40c30285d1d3ec3f50448007e20c9e0a152b
 
 		System.out.println("크레딧이 부여되었습니다.");
 
@@ -110,5 +114,114 @@ public class AdminService {
 		System.out.println("블랙리스트에서 삭제되었습니다.");
 	}
 
+<<<<<<< HEAD
+=======
+	public void addItem(Scanner sc) {
+		System.out.println("=== 아이템 등록 ===");
+		System.out.print("item name: ");
+		String itemName = sc.next();
+		System.out.print("game id (0.기본 1.마피아 2.퀴즈): "); // game_id와 game_name을 조회하여 자동으로 작성해야할듯함 (우선순위 낮음 시간이 된다면 진행)
+		int gameId = sc.nextInt();
+		System.out.print("price: ");
+		int price = sc.nextInt();
+		System.out.print("limitedEdition(T/F): ");
+		String s = sc.next();
+		boolean limitedEdition = false;
+		int amount = 0;
+		if (s.equals("T")) {
+			limitedEdition = true;
+			System.out.print("amount: ");
+			amount = sc.nextInt();
+		} else if (s.equals("F")) {
+			amount = 999999999;
+		}
+		itemDao.insert(new Item(0, itemName, gameId, price, limitedEdition, amount));
+	}
+
+	// 번호로 검색
+	public void getItem(Scanner sc) {
+		System.out.println("=== 아이템 검색 ===");
+		System.out.print("item id:");
+		int itemId = sc.nextInt();
+		Item i = itemDao.select(itemId);
+		if (i == null) {
+			System.out.println("해당 아이템 번호가 존재하지 않습니다.");
+		} else {
+			System.out.println(i);
+		}
+	}
+
+	// gameId로 검색
+	public void getByGameId(Scanner sc) {
+		System.out.println("=== 상점별 검색 ===");
+		System.out.print("game id (0.기본 1.마피아 2.퀴즈): ");
+		int gameId = sc.nextInt();
+		ArrayList<Item> list = itemDao.selectByGameId(gameId);
+		for (Item i : list) {
+			System.out.println(i);
+		}
+	}
+
+	// 전체 검색
+	public void printAllItem() {
+		System.out.println("=== 전체 검색 ===");
+		ArrayList<Item> list = getAll();
+		for (Item i : list) {
+			System.out.println(i);
+		}
+	}
+
+	public ArrayList<Item> getAll() {
+		return itemDao.selectAll();
+	}
+
+	// 아이템 수정
+	public void editItem(Scanner sc) {
+		System.out.println("=== 아이템 수정 ===");
+		System.out.print("item id:");
+		int itemId = sc.nextInt();
+		Item i = itemDao.select(itemId);
+		if (i == null) {
+			System.out.println("해당 아이템 번호가 존재하지 않습니다.");
+		} else {
+			System.out.println("== 수정 전 ==");
+			System.out.println(i);
+			System.out.print("new price: ");
+			int price = sc.nextInt();
+			System.out.print("limitedEdition(T/F): ");
+			String s = sc.next();
+			boolean limitedEdition = false;
+			int amount = 0;
+			if (s.equals("T")) {
+				limitedEdition = true;
+				System.out.print("limited amount: ");
+				amount = sc.nextInt();
+			} else if (s.equals("F")) {
+				amount = 999999999;
+			}
+//			i.updateItem(price, limitedEdition, amount);
+			itemDao.update(i);
+		}
+	}
+
+	// 아이템 삭제
+	public void deleteItem(Scanner sc) {
+		System.out.println("=== 아이템 삭제 ===");
+		System.out.print("item id: ");
+		int itemId = sc.nextInt();
+		sc.nextLine();
+		Item i = itemDao.select(itemId);
+		if (i == null) {
+			System.out.println("해당 아이템 번호가 존재하지 않습니다.");
+		} else {
+			try {
+				itemDao.delete(itemId);
+				System.out.println("아이템이 삭제되었습니다.");
+			} catch (Exception e) {
+				System.out.println("아이템 삭제 중 오류가 발생했습니다: " + e.getMessage());
+			}
+		}
+	}
+>>>>>>> b34e40c30285d1d3ec3f50448007e20c9e0a152b
 
 }

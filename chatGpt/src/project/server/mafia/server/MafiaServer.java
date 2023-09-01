@@ -1,6 +1,7 @@
 package project.server.mafia.server;
 
 import project.server.Gamable;
+import project.server.ServerStarter;
 import project.server.Status;
 import project.server.mafia.room.MafiaRoom;
 
@@ -15,42 +16,30 @@ import java.net.Socket;
  */
 public class MafiaServer implements Gamable {
 
-    private Status status;
+    private ServerStarter serverStarter;
     private int connectCounter;
     private MafiaRoom mafiaRoom;
-
-    public MafiaServer() {
-        this.status = Status.READY;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
 
     public void setMafiaRoom(MafiaRoom mafiaRoom) {
         this.mafiaRoom = mafiaRoom;
     }
 
     @Override
-    public void run(int port) {
-        mafiaRoom = new MafiaRoom(this);
+    public int run(int port, ServerStarter serverStarter) {
+        mafiaRoom = new MafiaRoom(this, serverStarter);
 
         mafiaRoom.start();
 
         try {
             ServerSocket serverSocket = new ServerSocket(port);
 
-            while (true) {
+            while (!serverStarter.isInterrupted()) {
                 Socket socket = serverSocket.accept();
 
                 connectCounter++;
 
                 if (connectCounter >= 5) {
-                    status = Status.GAMING;
+                    serverStarter.status = Status.GAMING;
                 }
 
                 System.out.println("[소켓 연결]" + socket.getInetAddress());
@@ -64,6 +53,12 @@ public class MafiaServer implements Gamable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("[Info] MafiaServer.run 종료됨");
+
+        mafiaRoom.interrupt();
+
+        return 0;
     }
 
 }

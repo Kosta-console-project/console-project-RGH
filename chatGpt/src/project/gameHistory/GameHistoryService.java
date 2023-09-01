@@ -9,31 +9,38 @@ public class GameHistoryService {
 
     private static final int winnerPoint = 50;
 
-    private GameHistoryDao dao;
+    private GameHistoryDao historyDao;
     private PlayerDao playerDao;
 
     public GameHistoryService() {
-        this.dao = new GameHistoryDao();
+        this.historyDao = new GameHistoryDao();
+        this.playerDao = new PlayerDao();
     }
 
-    public int setWinner(int gameId, int playerId) {
-        return dao.insert(gameId, playerId);
+    public int getGameRoomId() {
+        return historyDao.getGameRoomId();
     }
 
-    public int setWinner(int gameId, String nickname) {
+    public int getSequenceNumber() {
+        return historyDao.getGameRoomId();
+    }
+
+    public int setWinner(int gameId, int playerId, int sequenceNumber) {
+        return historyDao.insert(gameId, playerId, sequenceNumber);
+    }
+
+    public synchronized int setWinner(int gameId, String nickname, int sequenceNumber) {
         Player player = playerDao.findByNickname(nickname);
-
-        System.out.println("GameHistoryService.setWinner " + player.getPlayerId() + " " + player.getCredit());
 
         playerDao.updateCredit(player, 50);
 
-        System.out.println("GameHistoryService.setWinner " + player.getPlayerId() + " " + player.getCredit());
-
-        return dao.insert(gameId, player.getPlayerId());
+        return historyDao.insert(gameId, player.getPlayerId(), sequenceNumber);
     }
 
-    public List<GameHistoryQueryVo> getMyHistory(String nickname) {
-        return dao.findByPlayerId(nickname);
+    public void getMyHistory(String nickname) {
+        for (GameHistoryQueryVo vo : historyDao.findByPlayerId(nickname)) {
+            System.out.println(vo);
+        }
     }
 
 

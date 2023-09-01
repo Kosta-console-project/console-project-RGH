@@ -14,7 +14,7 @@ public class Table {
 
     public void createAll() {
         player();
-        admin();
+        manager();
         blacklist();
         game();
         gameHistory();
@@ -50,12 +50,12 @@ public class Table {
         }
     }
 
-    public void admin() {
+    public void manager() {
         Connection conn = dbConnect.conn();
-        String query =  "CREATE TABLE admin(" +
-                "admin_id NUMBER PRIMARY KEY," +
+        String query =  "CREATE TABLE manager(" +
+                "manager_id NUMBER PRIMARY KEY," +
                 "player_id NUMBER," +
-                "pwd NUMBER NOT NULL," +
+                "pin NUMBER NOT NULL," +
                 "black_list_id NUMBER," +
                 "create_date DATE," +
                 "last_modified_date DATE," +
@@ -63,7 +63,7 @@ public class Table {
         try {
             Statement statement = conn.createStatement();
             statement.execute(query);
-            System.out.println("Create Table Admin");
+            System.out.println("Create Table manger");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -72,11 +72,11 @@ public class Table {
         }
     }
 
-    //TODO : FK
     public void blacklist() {
         Connection conn = dbConnect.conn();
         String query =  "CREATE TABLE blacklist(" +
                 "black_list_id NUMBER PRIMARY KEY," +
+                "player_id NUMBER NOT NULL," +
                 "reason VARCHAR2(50)," +
                 "create_date DATE," +
                 "last_modified_date DATE)";
@@ -84,6 +84,7 @@ public class Table {
             Statement statement = conn.createStatement();
             statement.execute(query);
             System.out.println("Create Table Blacklist");
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,6 +117,7 @@ public class Table {
                 "history_id NUMBER PRIMARY KEY," +
                 "game_id NUMBER NOT NULL," +
                 "winner NUMBER," +
+                "game_room_id NUMBER NOT NULL," +
                 "create_date DATE," +
                 "last_modified_date DATE," +
                 "CONSTRAINT fk_game_id FOREIGN KEY(game_id) REFERENCES game(game_id)," +
@@ -138,10 +140,11 @@ public class Table {
                 "item_id NUMBER PRIMARY KEY," +
                 "item_name VARCHAR2(50) NOT NULL," +
                 "game_id NUMBER," +
+                "category VARCHAR2(20)," +
                 "price NUMBER," +
                 "limited_edition CHAR(1) DEFAULT '0'," +
                 "amount NUMBER," +
-                "item_info VARCHAR2(100) NOT NULL," +
+                "item_info VARCHAR2(1000) NOT NULL," +
                 "create_date DATE," +
                 "last_modified_date DATE)";
         try {
@@ -159,7 +162,7 @@ public class Table {
     public void purchase() {
         Connection conn = dbConnect.conn();
         String query =  "CREATE TABLE purchase(" +
-                "order_id NUMBER PRIMARY KEY," +
+                "purchase_id NUMBER PRIMARY KEY," +
                 "item_id NUMBER NOT NULL," +
                 "player_id NUMBER NOT NULL," +
                 "create_date DATE," +

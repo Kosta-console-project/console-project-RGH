@@ -1,7 +1,10 @@
 package project.item;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static java.awt.SystemColor.info;
 
 public class ItemService {
     private ItemDao itemDao;
@@ -31,7 +34,8 @@ public class ItemService {
             amount = 999999999;
         }
         System.out.print("item info: ");
-        String itemInfo = sc.next();
+        sc.nextLine(); // 입력 버퍼를 비워주는 역할
+        String itemInfo = sc.nextLine();
         itemDao.insert(new Item(itemName, gameId, price, limitedEdition, amount, itemInfo));
     }
 
@@ -89,14 +93,17 @@ public class ItemService {
             String s = sc.next();
             boolean limitedEdition = false;
             int amount = 0;
-            if (s.equals("T")) {
+            if (s.equalsIgnoreCase("T")) {
                 limitedEdition = true;
                 System.out.print("limited amount: ");
                 amount = sc.nextInt();
-            } else if (s.equals("F")) {
+            } else if (s.equalsIgnoreCase("F")) {
                 amount = 999999999;
             }
-            i.updateItem(price, limitedEdition, amount);
+            System.out.print("new Info: ");
+            sc.nextLine();
+            String info = sc.nextLine();
+            i.updateItem(price, limitedEdition, amount, info);
             itemDao.update(i);
         }
     }

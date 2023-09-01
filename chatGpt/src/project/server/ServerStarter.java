@@ -11,7 +11,9 @@ public class ServerStarter extends Thread {
     private Gamable gamable;
     private int port;
 
-    public static List<String> winners;
+    public Status status;
+
+    public List<String> winners;
 
     public ServerStarter(Gamable gamable, int port) {
         this.gamable = gamable;
@@ -26,12 +28,9 @@ public class ServerStarter extends Thread {
 
     @Override
     public void run() {
-        gamable.run(port);
+        int gameStatus = gamable.run(port, this);
 
-        while (winners == null) {
-
-        }
-        winners.forEach(w -> gameHistoryService.setWinner(1, w));
+        System.out.println("[Info] ServerStarter.run 종료됨 상태코드: " + gameStatus);
     }
 
 }

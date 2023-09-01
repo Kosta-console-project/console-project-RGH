@@ -23,45 +23,44 @@ public class MafiaRoom extends ChatRoom {
     public static final int MIN_PERSON = 5;
     private DayTimer dayTimer = null;
 
-    private MafiaServer currentServer;
+    private ServerStarter serverStarter;
 
-    private ArrayList<ChatServerTh> deadList;
-
-    public static int selected = 0;
+    public int selected = 0;
 
     private int countMafia = 0;
     private int countCitizen = 0;
 
     private static List<String> winners;
 
-    public MafiaRoom(MafiaServer mafiaServer) {
+    public MafiaRoom(MafiaServer mafiaServer, ServerStarter serverStarter) {
         super.list = new ArrayList<ChatServerTh>();
-        this.deadList = new ArrayList<>();
 
-        this.currentServer = mafiaServer;
+        this.serverStarter = serverStarter;
     }
 
 
 
     public void setClientDead(ChatServerTh chatServerTh) {
-        for (ChatServerTh c : list) {
-            if (c.equals(chatServerTh)) {
-                c.setAlivePerson(false);
-                c.writeln("/stop");
+        synchronized (list) {
+            for (ChatServerTh c : list) {
+                if (c.equals(chatServerTh)) {
+                    c.setAlivePerson(false);
+                    c.writeln("/stop");
+                }
             }
-
-            deadList.add(c);
         }
     }
 
     public void kill(String name) {
-        for (int i = list.size() - 1; i >= 0; i--) {
-            ChatServerTh c = list.get(i);
+        synchronized (list) {
+            for (int i = list.size() - 1; i >= 0; i--) {
+                ChatServerTh c = list.get(i);
 
-            if (c.getUserName().equals(name)) {
-                setClientDead(c);
-                c.writeln("당신은 마피아에 의해 죽었습니다.");
-                sendMessageAll("악랄한 마피아에 의해 " + name + "님이 죽었습니다.");
+                if (c.getUserName().equals(name)) {
+                    c.writeln("당신은 마피아에 의해 죽었습니다.");
+                    sendMessageAll("악랄한 마피아에 의해 " + name + "님이 죽었습니다.");
+                    setClientDead(c);
+                }
             }
         }
     }
@@ -93,41 +92,39 @@ public class MafiaRoom extends ChatRoom {
     public void sendMessageAll(String message, RolesAdapter rolesAdapter, ChatServerTh chatServerTh) {
         if (chatServerTh.isAlivePerson()) {
             if (dayTimer.isDay()) {
-                for (ChatServerTh th : list) {
-                    if (th == chatServerTh) {
-                        Pattern pattern = Pattern.compile("/vote (\\w+)");
-                        Matcher matcher = pattern.matcher(message);
+                synchronized (list) {
+                    for (ChatServerTh th : list) {
+                        if (th == chatServerTh) {
+                            Pattern pattern = Pattern.compile("/vote (\\w+)");
+                            Matcher matcher = pattern.matcher(message);
 
-                        if (matcher.matches() && dayTimer.isDay()) {
-                            if (!rolesAdapter.getRoles().voted) {
-                                rolesAdapter.getRoles().vote(matcher.group(1));
-                                th.writeln("투표되었습니다.");
-                                rolesAdapter.getRoles().voted = true;
+                            if (matcher.matches() && dayTimer.isDay()) {
+                                if (!rolesAdapter.getRoles().voted) {
+                                    rolesAdapter.getRoles().vote(matcher.group(1));
+                                    th.writeln("투표되었습니다.");
+                                    rolesAdapter.getRoles().voted = true;
+                                }
+                            } else {
+                                sendMessageAll("[" + th.getUserName() + "] " + message);
                             }
-                        } else {
-                            sendMessageAll("[" + th.getUserName() + "] " + message);
                         }
                     }
                 }
             } else {
-                for (ChatServerTh th : list) {
-                    if (th == chatServerTh) {
-                        Pattern pattern = Pattern.compile("/use (\\w+)");
-                        Matcher matcher = pattern.matcher(message);
+                synchronized (list) {
+                    for (ChatServerTh th : list) {
+                        if (th == chatServerTh) {
+                            Pattern pattern = Pattern.compile("/use (\\w+)");
+                            Matcher matcher = pattern.matcher(message);
 
-                        if (matcher.matches() && !dayTimer.isDay()) {
-                            th.writeln(rolesAdapter.useAbility(matcher.group(1)));
+                            if (matcher.matches() && !dayTimer.isDay()) {
+                                th.writeln(rolesAdapter.useAbility(matcher.group(1)));
+                            }
                         }
                     }
                 }
             }
         }
-    }
-
-
-
-    public int getListSize() {
-        return list.size();
     }
 
     public Roles getRoleByName(String name) {
@@ -187,7 +184,7 @@ public class MafiaRoom extends ChatRoom {
             for (ChatServerTh c : list) {
                 if (c.getRoles() instanceof Citizen) {
                     winners.add(c.getUserName());
-                    currentServer.setStatus(Status.FINISHED);
+                    serverStarter.status = Status.FINISHED;
                 }
             }
         } else if (countMafia >= countCitizen) {
@@ -195,14 +192,18 @@ public class MafiaRoom extends ChatRoom {
             for (ChatServerTh c : list) {
                 if (c.getRoles() instanceof Mafia) {
                     winners.add(c.getUserName());
-                    currentServer.setStatus(Status.FINISHED);
+                    serverStarter.status = Status.FINISHED;
                 }
             }
         }
 
-        ServerStarter.winners = winners;
+        serverStarter.winners = winners;
         dayTimer.dayTimerflag = false;
         dayTimer.interrupt();
+
+        for (ChatServerTh c : list) {
+            c.interrupt();
+        }
 
         sendMessageAll("/stop");
 

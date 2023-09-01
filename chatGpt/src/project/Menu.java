@@ -167,6 +167,7 @@ public class Menu {
     }
 
     private void shopRun(Scanner sc) {
+        sc.nextLine();
         String menu = "1.아이템구매 2.구매내역 3.아이템등록 4.조회 5.수정 6.삭제 0.종료";
         boolean flag = true;
         int m = 0;
@@ -186,6 +187,7 @@ public class Menu {
                     perchaseService.addPurchase(sc, itemService.getAll());
                     break;
                 case 2:
+                    perchaseService.printPurchaseById();
                     break;
                 case 3:
                     itemService.addItem(sc);
@@ -202,6 +204,7 @@ public class Menu {
             }
         }
     }
+<<<<<<< HEAD
     
     public void adminRun(Scanner sc) {
   		boolean flag = true;
@@ -248,4 +251,6 @@ public class Menu {
   			}
   		}
   	}
+=======
+>>>>>>> b34e40c30285d1d3ec3f50448007e20c9e0a152b
 }
