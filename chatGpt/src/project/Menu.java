@@ -204,8 +204,7 @@ public class Menu {
             }
         }
     }
-<<<<<<< HEAD
-    
+   
     public void adminRun(Scanner sc) {
   		boolean flag = true;
   		int menu;
@@ -251,6 +250,5 @@ public class Menu {
   			}
   		}
   	}
-=======
->>>>>>> b34e40c30285d1d3ec3f50448007e20c9e0a152b
+
 }

@@ -145,8 +145,6 @@ public class AdminDao {
 			pstmt.setDate(4, b.getLastModifiedDate());
 			pstmt.executeUpdate();
 
-			System.out.println("해당 플레이어가 블랙리스트에 추가되었습니다.");
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -165,8 +163,6 @@ public class AdminDao {
 
 			pstmt.setInt(1, playerId);
 			pstmt.executeUpdate();
-
-			System.out.println("해당 플레이어가 블랙리스트에서 해제되었습니다.");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
