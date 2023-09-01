@@ -4,8 +4,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 public class Player {
-
-    private int playerId;
+	private int playerId;
     private String loginId;
     private String password;
 	private String confirmPassword;
