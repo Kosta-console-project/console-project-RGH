@@ -70,25 +70,30 @@ public class AdminService {
 		int index = sc.nextInt();
 		int m = index;
 
-		switch (m) {
-		case 1:
-			adminDao.addBlackList(playerId, "욕설");
-			break;
-		case 2:
-			adminDao.addBlackList(playerId, "버그 악용");
-			break;
-		case 3:
-			adminDao.addBlackList(playerId, "게임 방해");
-			break;
+		boolean flag = adminDao.checkBlackList(playerId);
+		if(flag == false) {
+			switch (m) {
+			case 1:
+				adminDao.addBlackList(playerId, "욕설");
+				break;
+			case 2:
+				adminDao.addBlackList(playerId, "버그 악용");
+				break;
+			case 3:
+				adminDao.addBlackList(playerId, "게임 방해");
+				break;
+			}
+			System.out.println("플레이어가 블랙리스트에 추가 되었습니다. 활동이 금지됩니다.");
+		}else {
+			System.out.println("이미 블랙리스트에 오른 플레이어입니다.");
 		}
-		System.out.println("플레이어가 블랙리스트에 추가 되었습니다. 활동이 금지됩니다.");
 	}
 
 	public void printAllBlackList() {
 		System.out.println("=== 블랙리스트 전체 출력===");
 		ArrayList<BlackList> list = adminDao.selectAllBlackList();
 
-		if (list.isEmpty() || list == null) {// 확인 필요
+		if (list.isEmpty() || list == null) {
 			System.out.println("블랙리스트에 추가된 플레이어가 없습니다.");
 		} else {
 			for (BlackList b : list) {
