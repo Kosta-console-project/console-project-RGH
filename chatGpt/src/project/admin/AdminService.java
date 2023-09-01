@@ -24,13 +24,18 @@ public class AdminService {
 
 		System.out.println("크레딧을 부여할 플레이어 닉네임:");
 		String nickname = sc.next();
+
 		Player p = playerDao.findByNickname(nickname);
 
-		System.out.println("부여할 크레딧:");
-		int newCredit = sc.nextInt();
-		playerDao.updateCredit(p, newCredit);
+		if (p == null) {
+			System.out.println("존재하지 않는 플레이어입니다.");
+		} else {
+			System.out.println("부여할 크레딧:");
+			int newCredit = sc.nextInt();
+			playerDao.updateCredit(p, newCredit);
 
-		System.out.println("크레딧이 부여되었습니다.");
+			System.out.println("크레딧이 부여되었습니다.");
+		}
 
 	}
 
@@ -39,14 +44,18 @@ public class AdminService {
 
 		System.out.println("크레딧을 삭감할 플레이어 닉네임:");
 		String nickname = sc.next();
+
 		Player p = playerDao.findByNickname(nickname);
 
-		System.out.println("삭감할 크레딧:");
-		int newCredit = sc.nextInt();
+		if (p == null) {
+			System.out.println("존재하지 않는 플레이어입니다.");
+		} else { 
+			System.out.println("삭감할 크레딧:");
+			int newCredit = sc.nextInt();
+			playerDao.updateCredit(p, -newCredit);
 
-		playerDao.updateCredit(p, -newCredit);
-
-		System.out.println("크레딧이 삭감되었습니다.");
+			System.out.println("크레딧이 삭감되었습니다.");
+		}
 
 	}
 
@@ -71,7 +80,7 @@ public class AdminService {
 		int m = index;
 
 		boolean flag = adminDao.checkBlackList(playerId);
-		if(flag == false) {
+		if (flag == false) {
 			switch (m) {
 			case 1:
 				adminDao.addBlackList(playerId, "욕설");
@@ -84,7 +93,7 @@ public class AdminService {
 				break;
 			}
 			System.out.println("플레이어가 블랙리스트에 추가 되었습니다. 활동이 금지됩니다.");
-		}else {
+		} else {
 			System.out.println("이미 블랙리스트에 오른 플레이어입니다.");
 		}
 	}
@@ -112,5 +121,4 @@ public class AdminService {
 
 		System.out.println("플레이어가 블랙리스트에서 삭제되었습니다.");
 	}
-
 }
